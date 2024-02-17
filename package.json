@@ -1,0 +1,11 @@
+{
+  "name": "web-audit-module-assets-coverage",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "web_audit": "^5.0.0-rc3"
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
