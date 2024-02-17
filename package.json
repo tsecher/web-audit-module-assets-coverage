@@ -7,5 +7,6 @@
     "web_audit": "^5.0.0-rc3"
   },
   "scripts": {},
-  "devDependencies": {}
+  "devDependencies": {},
+  "version": "1.0.0"
 }
