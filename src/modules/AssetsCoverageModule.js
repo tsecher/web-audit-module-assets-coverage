@@ -1,9 +1,10 @@
 import {AbstractPuppeteerJourneyModule} from 'web_audit/dist/journey/AbstractPuppeteerJourneyModule.js';
 import {PuppeteerJourneyEvents} from 'web_audit/dist/journey/AbstractPuppeteerJourney.js';
 import {ModuleEvents} from 'web_audit/dist/modules/ModuleInterface.js';
+import schema from "./assets_coverage.schema.json" with {type: "json"};
 
 /**
- * W3c Validator Module events.
+ * Assets Coverage Module events.
  */
 export const AssetsCoverageModuleEvents = {
 	createAssetsCoverageModule: 'assets_coverage_module__createAssetsCoverageModule',
@@ -14,7 +15,7 @@ export const AssetsCoverageModuleEvents = {
 };
 
 /**
- * W3c Validator.
+ * Assets coverage.
  */
 export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule {
 	get name() {
@@ -25,6 +26,10 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 		return `assets_coverage`;
 	}
 
+	getSchema() {
+		return schema;
+	}
+
 	defaultOptions = {};
 	contextsData = {};
 
@@ -33,25 +38,10 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 	 */
 	async init(context) {
 		this.context = context;
-		// Install assets coverage store.
-		this.context.config.storage?.installStore('assets_coverage', this.context, {
-			url: 'Url',
-			context: 'Context',
-			js: 'Unused JS rate',
-			css: 'Unused CSS rate',
-			files: 'Unused files',
-			total: 'Total unused assets rate',
-		});
-		// Install assets coverage store.
-		this.context.config.storage?.installStore('assets_coverage_detail', this.context, {
-			url: 'Url',
-			context: 'Context',
-			type: 'Type',
-			file: 'File',
-			total: 'Total',
-			used: 'Used',
-			ranges: 'Ranges',
-		});
+
+		// Install store.
+		this.context.config.storage?.installSchema(this, this.context);
+		
 		// Emit.
 		this.context.eventBus.emit(AssetsCoverageModuleEvents.createAssetsCoverageModule, {module: this});
 	}
@@ -60,17 +50,19 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 	 * {@inheritdoc}
 	 */
 	initEvents(journey) {
-		journey.on(PuppeteerJourneyEvents.JOURNEY_START, async (data) => {
+		journey.on(PuppeteerJourneyEvents.JOURNEY_NEW_CONTEXT, async (data) => {
+			this.coverage = data.wrapper.page.coverage;
 			await Promise.all([
-				data.wrapper.page.coverage.startJSCoverage(),
-				data.wrapper.page.coverage.startCSSCoverage(),
+				this.coverage.startJSCoverage(),
+				this.coverage.startCSSCoverage(),
 			]);
 		});
-		journey.on(PuppeteerJourneyEvents.JOURNEY_NEW_CONTEXT, async (data) => {
+		journey.on(PuppeteerJourneyEvents.JOURNEY_END_CONTEXT, async (data) => {
 			const [jsCoverage, cssCoverage] = await Promise.all([
-				data.wrapper.page.coverage.stopJSCoverage(),
-				data.wrapper.page.coverage.stopCSSCoverage(),
+				this.coverage.stopJSCoverage(),
+				this.coverage.stopCSSCoverage(),
 			]);
+			
 			this.contextsData[data.name] = {
 				js: jsCoverage,
 				css: cssCoverage,
@@ -148,7 +140,7 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 				};
 
 				this.context?.eventBus.emit(AssetsCoverageModuleEvents.onResultDetail, eventData.result);
-				this.context?.config.storage.add('assets_coverage_detail', this.context, eventData.result);
+				this.context?.config.storage.add(this, 'assets_coverage_details', this.context, eventData.result);
 			}
 		});
 		// Compute ratio.
@@ -166,7 +158,7 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 		};
 		this.context?.eventBus.emit(AssetsCoverageModuleEvents.onResult, eventData);
 		this.context?.config?.logger.result(`Assets coverage`, eventData.result, urlWrapper.url.toString());
-		this.context?.config?.storage?.add('assets_coverage', this.context, eventData.result);
+		this.context?.config?.storage?.add(this, 'assets_coverage', this.context, eventData.result);
 		this.context?.eventBus.emit(ModuleEvents.afterAnalyse, eventData);
 		this.context?.eventBus.emit(AssetsCoverageModuleEvents.afterAnalyse, eventData);
 	}
@@ -251,7 +243,6 @@ export default class AssetsCoverageModule extends AbstractPuppeteerJourneyModule
 		}
 		for (let i = 0; i < bounds.length - 2; i++) {
 			if (!bounds[i + 1]) {
-				console.log(bounds[i + 1]);
 				process.exit();
 			}
 			unusedBounds.push({

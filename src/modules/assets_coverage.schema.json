@@ -1,0 +1,106 @@
+{
+    "id": "assets_coverage",
+    "label": "Assets coverage",
+    "description": "Provides ",
+    "types": [
+      "page"
+    ],
+    "structure": {
+      "assets_coverage": {
+        "label": "Assets coverage",
+        "description": "The assets coverage data",
+        "structure": {
+          "url": {
+            "label": "Url",
+            "description": "The audited page",
+            "type": "string"
+          },
+          "context": {
+            "label": "Context",
+            "description": "The context",
+            "type": "string"
+          },
+          "js": {
+            "label": "Unused JS rate",
+            "description": "The purcentage of unused js",
+            "type": " number",
+            "values": {
+              "target": 0,
+              "min_target": 25
+            }
+          },
+          "css": {
+            "label": "Unused CSS rate",
+            "description": "The purcentage of unused css",
+            "type": "number",
+            "values": {
+              "target": 0,
+              "min_target": 25
+            }
+          },
+          "files": {
+            "label": "Unused files",
+            "description": "The purcentage of unused files",
+            "type": "number",
+            "values": {
+              "target": 0,
+              "min_target": 25
+            }
+          },
+          "total": {
+            "label": "Total unused assets rate",
+            "description": "The total of unused assets",
+            "type": "number",
+            "values": {
+              "target": 0,
+              "min_target": 25
+            }
+          }
+        }
+      },
+      "assets_coverage_details": {
+        "label": "Assets coverage details",
+        "description": "The assets coverage details",
+        "structure": {
+          "url": {
+            "label": "Url",
+            "description": "The audited page",
+            "type": "string"
+          },
+          "context": {
+            "label": "Context",
+            "description": "The context",
+            "type": "string"
+          },
+          "type": {
+            "label": "Type",
+            "description": "The context",
+            "type": "string"
+          },
+          "file": {
+            "label": "File",
+            "description": "The context",
+            "type": "string"
+          },
+          "total": {
+            "label": "Total",
+            "description": "The number of unused elements",
+            "type": "number"
+          },
+          "used": {
+            "label": "Used",
+            "description": "The context",
+            "type": "string"
+          },
+          "ranges": {
+            "label": "Ranges",
+            "description": "The context",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  
+
+
