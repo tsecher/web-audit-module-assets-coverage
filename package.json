@@ -3,6 +3,11 @@
   "main": "index.js",
   "license": "MIT",
   "type": "module",
+  "keywords": [
+    "web-audit",
+    "web-audit-plugin",
+    "assets-coverage"
+  ],
   "dependencies": {
     "web_audit": "^5.0"
   },
