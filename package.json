@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "web_audit": "^5.0.0-rc3"
+    "web_audit": "^5.0"
   },
   "scripts": {},
   "devDependencies": {},
